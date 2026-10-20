@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'OpenAI-style Chat App',
-  description: 'A full-featured ChatGPT-inspired interface with real API support.'
+  description: 'A full-featured ChatGPT-inspired interface with demo auth and real API support.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

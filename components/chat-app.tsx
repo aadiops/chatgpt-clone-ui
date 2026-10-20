@@ -1,129 +1,99 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+'use client'
 
-:root {
-  --bg: #0b1020;
-  --bg-alt: #111827;
-  --panel: #111827;
-  --panel-strong: #1f2937;
-  --sidebar: #111827;
-  --sidebar-soft: #1f2937;
-  --surface: rgba(255, 255, 255, 0.04);
-  --surface-strong: rgba(255, 255, 255, 0.08);
-  --line: rgba(255, 255, 255, 0.08);
-  --text: #f3f4f6;
-  --text-muted: #94a3b8;
-  --accent: #10a37f;
-  --accent-2: #65d6ad;
-  --shadow: rgba(15, 23, 42, 0.5);
-}
+import { useState } from 'react'
+import { ArrowRight, Lock, Mail } from 'lucide-react'
 
-html,
-body {
-  margin: 0;
-  min-height: 100%;
-  background: var(--bg);
-  color: var(--text);
-  font-family: Arial, Helvetica, sans-serif;
-}
+export default function LoginPage() {
+  const [email, setEmail] = useState('demo@example.com')
+  const [password, setPassword] = useState('demo123')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-body {
-  min-height: 100vh;
-}
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setLoading(true)
+    setError('')
 
-* {
-  box-sizing: border-box;
-}
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
 
-button,
-input,
-textarea,
-select {
-  font: inherit;
-}
+      const payload = await response.json()
+      if (!response.ok) {
+        throw new Error(payload?.error || 'Login failed.')
+      }
 
-button {
-  cursor: pointer;
-}
+      window.location.href = '/'
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unexpected login error.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
-.chat-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.2) transparent;
-}
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-[#0b1020] px-4">
+      <div className="w-full max-w-md rounded-3xl border border-white/10 bg-[#111827] p-6 shadow-[0_20px_50px_rgba(15,23,42,0.6)]">
+        <div className="mb-6 flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#10a37f] text-lg font-semibold text-black">AI</div>
+          <div>
+            <p className="text-sm uppercase tracking-[0.22em] text-slate-400">Welcome</p>
+            <h1 className="text-2xl font-semibold text-white">Sign in</h1>
+          </div>
+        </div>
 
-.chat-scrollbar::-webkit-scrollbar {
-  width: 8px;
-}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <label className="block">
+            <span className="mb-2 flex items-center gap-2 text-sm text-slate-300">
+              <Mail className="h-4 w-4 text-slate-400" /> Email
+            </span>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-white outline-none placeholder:text-slate-500 focus:border-[#10a37f]"
+              placeholder="demo@example.com"
+              required
+            />
+          </label>
 
-.chat-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
+          <label className="block">
+            <span className="mb-2 flex items-center gap-2 text-sm text-slate-300">
+              <Lock className="h-4 w-4 text-slate-400" /> Password
+            </span>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-white outline-none placeholder:text-slate-500 focus:border-[#10a37f]"
+              placeholder="demo123"
+              required
+            />
+          </label>
 
-.chat-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.15);
-  border-radius: 9999px;
-}
+          {error ? <p className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-200">{error}</p> : null}
 
-.prose {
-  color: #e5e7eb;
-  line-height: 1.7;
-}
+          <button
+            type="submit"
+            disabled={loading}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#10a37f] px-4 py-3 font-medium text-black transition hover:bg-[#13b98c] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {loading ? 'Signing in...' : 'Continue'}
+            <ArrowRight className="h-4 w-4" />
+          </button>
+        </form>
 
-.prose p,
-.prose ul,
-.prose ol,
-.prose pre,
-.prose blockquote,
-.prose h1,
-.prose h2,
-.prose h3,
-.prose h4,
-.prose h5,
-.prose h6 {
-  margin-top: 0;
-  margin-bottom: 0.8rem;
-}
-
-.prose code {
-  background: rgba(148, 163, 184, 0.12);
-  color: #f9fafb;
-  padding: 0.12rem 0.35rem;
-  border-radius: 0.35rem;
-  font-size: 0.92em;
-}
-
-.prose pre {
-  background: #0f172a;
-  border: 1px solid rgba(148,163,184,0.2);
-  border-radius: 0.8rem;
-  padding: 1rem;
-  overflow-x: auto;
-}
-
-.prose pre code {
-  background: transparent;
-  padding: 0;
-}
-
-.prose a {
-  color: #67e8f9;
-  text-decoration: underline;
-}
-
-.prose blockquote {
-  border-left: 3px solid rgba(148,163,184,0.6);
-  color: #cbd5e1;
-  padding-left: 1rem;
-}
-
-.prose table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.prose th,
-.prose td {
-  border: 1px solid rgba(255,255,255,0.1);
-  padding: 0.5rem 0.75rem;
+        <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-3 text-xs text-slate-400">
+          Demo accounts:
+          <div className="mt-2 space-y-1">
+            <p>demo@example.com / demo123</p>
+            <p>admin@example.com / admin123</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  )
 }
