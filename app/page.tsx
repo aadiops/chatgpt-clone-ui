@@ -1,18 +1,5 @@
-import './globals.css'
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import ChatApp from '@/components/chat-app'
 
-const inter = Inter({ subsets: ['latin'] })
-
-export const metadata: Metadata = {
-  title: 'ChatGPT UI Clone',
-  description: 'ChatGPT-style interface built in Next.js'
-}
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>{children}</body>
-    </html>
-  )
+export default function HomePage() {
+  return <ChatApp />
 }
